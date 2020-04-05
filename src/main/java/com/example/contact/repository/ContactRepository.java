@@ -12,6 +12,5 @@ import java.util.List;
 
 @Repository
 public interface ContactRepository extends JpaRepository<ContactEntity, Integer> {
-    @Query("select c from ContactEntity c where c.name like %?1%")
-    List<ContactEntity> findByName(String name);
+    Page<ContactEntity> findByNameContaining(String name, Pageable pageable);
 }

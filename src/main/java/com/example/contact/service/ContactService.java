@@ -16,6 +16,6 @@ public interface ContactService {
 
     void remove(ContactEntity contactEntity);
 
-    List<ContactEntity> findByName(String name);
+    Page<ContactEntity> findByName(String name, Pageable pageable);
 
 }

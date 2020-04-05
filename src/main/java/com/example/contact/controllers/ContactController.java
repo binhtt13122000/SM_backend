@@ -5,6 +5,7 @@ import com.example.contact.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,22 +27,19 @@ public class ContactController {
     public ResponseEntity getAllContacts(
             @RequestParam Optional<Integer> page,
             @RequestParam Optional<Integer> size,
-            @RequestParam Optional<String> sortBy){
-        Page<ContactEntity> contactEntityList =
-                contactService.findAllContact(PageRequest.of(page.orElse(0), size.orElse(5), Sort.Direction.ASC, sortBy.orElse("id")));
-        if(contactEntityList.isEmpty()){
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+            @RequestParam Optional<String> sortBy,
+            @RequestParam Optional<String> q){
+        Pageable pageable = PageRequest.of(page.orElse(0), size.orElse(10), Sort.Direction.ASC, sortBy.orElse("id"));
+        Page<ContactEntity> contactEntityPage;
+        if(q.isPresent()){
+            contactEntityPage = contactService.findByName(q.get(), pageable);
         } else {
-            return new ResponseEntity(contactEntityList, HttpStatus.OK);
+            contactEntityPage = contactService.findAllContact(pageable);
         }
-    }
-    @GetMapping("/contact")
-    public ResponseEntity getContactsByName(@RequestParam Optional<String> name){
-        List<ContactEntity> contactEntities = contactService.findByName(name.orElse(""));
-        if(contactEntities.isEmpty()){
+        if(contactEntityPage.isEmpty()){
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity(contactEntities, HttpStatus.OK);
+            return new ResponseEntity(contactEntityPage, HttpStatus.OK);
         }
     }
 

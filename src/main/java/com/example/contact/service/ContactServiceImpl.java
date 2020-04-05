@@ -38,8 +38,8 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public List<ContactEntity> findByName(String name) {
-        return contactRepository.findByName(name);
+    public Page<ContactEntity> findByName(String name, Pageable pageable) {
+        return contactRepository.findByNameContaining(name, pageable);
     }
 
 
