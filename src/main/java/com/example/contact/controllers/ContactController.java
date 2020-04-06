@@ -25,11 +25,11 @@ public class ContactController {
 
     @GetMapping("/contacts")
     public ResponseEntity getAllContacts(
-            @RequestParam Optional<Integer> page,
-            @RequestParam Optional<Integer> size,
-            @RequestParam Optional<String> sortBy,
+            @RequestParam Optional<Integer> offset,
+            @RequestParam Optional<Integer> limit,
+            @RequestParam Optional<String> sort,
             @RequestParam Optional<String> q){
-        Pageable pageable = PageRequest.of(page.orElse(0), size.orElse(10), Sort.Direction.ASC, sortBy.orElse("id"));
+        Pageable pageable = PageRequest.of(offset.orElse(0), limit.orElse(10), Sort.Direction.ASC, sort.orElse("id"));
         Page<ContactEntity> contactEntityPage;
         if(q.isPresent()){
             contactEntityPage = contactService.findByName(q.get(), pageable);
