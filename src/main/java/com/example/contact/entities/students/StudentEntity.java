@@ -1,25 +1,26 @@
-package com.example.contact.entities;
+package com.example.contact.entities.students;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "tblContact")
-public class ContactEntity {
+@Table(name = "Students")
+public class StudentEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false, unique = true)
+    @Column(name = "id", nullable = false, unique = true)
     private Integer id;
 
-    @Column(name = "NAME", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "EMAIL")
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "PHONE")
+    @Column(name = "phone")
     private String phone;
 
-    public ContactEntity() {
+    public StudentEntity() {
     }
 
     public Integer getId() {
