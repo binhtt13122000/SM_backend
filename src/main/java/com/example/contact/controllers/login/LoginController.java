@@ -5,6 +5,7 @@ import com.example.contact.entities.authentication.AuthenticationResponse;
 import com.example.contact.entities.users.UserEntity;
 import com.example.contact.security.jwtutils.JwtUtil;
 import com.example.contact.service.users.MyUserDetailsService;
+import com.example.contact.validation.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,8 @@ public class LoginController {
     private MyUserDetailsService userDetailsService;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private Validation validation;
 
     //    @GetMapping("/users")
 //    @RolesAllowed("ROLE_ADMIN")
@@ -41,6 +44,14 @@ public class LoginController {
 //        }
 //    }
 
+    @PostMapping("/register")
+    public ResponseEntity addNewUser(@RequestBody UserEntity userEntity) {
+        if(validation.isExistedUsername(userEntity.getUsername()) || validation.isAdmin(userEntity)){
+            return  new ResponseEntity(userEntity, HttpStatus.BAD_REQUEST);
+        }
+        userDetailsService.save(userEntity);
+        return new ResponseEntity(userEntity, HttpStatus.CREATED);
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception{

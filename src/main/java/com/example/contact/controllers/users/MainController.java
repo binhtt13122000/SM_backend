@@ -1,12 +1,10 @@
 package com.example.contact.controllers.users;
 
 import com.example.contact.entities.role.Role;
-import com.example.contact.entities.users.UserDetail;
 import com.example.contact.entities.users.UserEntity;
-import com.example.contact.entities.users.UserRequest;
 import com.example.contact.entities.users.UserResponse;
 import com.example.contact.service.users.MyUserDetailsService;
-import com.example.contact.service.users.UserService;
+import com.example.contact.validation.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
@@ -15,14 +13,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:8080")
@@ -70,23 +64,39 @@ public class MainController {
         }
     }
 
-    @PostMapping("/user")
-    public ResponseEntity addNewUser(@RequestBody UserRequest userEntity) {
-        userService.save(userEntity);
-        return new ResponseEntity(userEntity, HttpStatus.CREATED);
-    }
-
     @PutMapping("/user/{id}")
     public ResponseEntity updateUser(@PathVariable("id") Long id, @RequestBody UserEntity userEntity) {
         Optional<UserEntity> currentUserEntity = userService.findById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!currentUserEntity.isPresent()) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        } else {
+            if(currentUserEntity.get().getUsername().equals(authentication.getName()) || isAdmin(authentication)){
+                currentUserEntity.get().setPassword(userEntity.getPassword());
+                currentUserEntity.get().setName(userEntity.getName());
+                currentUserEntity.get().setEmail(userEntity.getEmail());
+                currentUserEntity.get().setPhone(userEntity.getPhone());
+                userService.save(currentUserEntity.get());
+                return new ResponseEntity(new UserResponse(currentUserEntity.get()), HttpStatus.OK);
+            } else {
+                return new ResponseEntity(HttpStatus.FORBIDDEN);
+            }
         }
-        currentUserEntity.get().setName(userEntity.getName());
-        currentUserEntity.get().setEmail(userEntity.getEmail());
-        currentUserEntity.get().setPhone(userEntity.getPhone());
-        userService.save(currentUserEntity.get());
-        return new ResponseEntity(currentUserEntity.get(), HttpStatus.OK);
+
+    }
+
+    @RolesAllowed("ROLE_ADMIN")
+    @PutMapping("/admin/{id}")
+    public ResponseEntity addAdminRole(@PathVariable("id") Long id){
+        Optional<UserEntity> currentUserEntity = userService.findById(id);
+        if(currentUserEntity.isPresent()){
+            Set<Role> roles = currentUserEntity.get().getRoles();
+            roles.add(new Role((long) 1));
+            currentUserEntity.get().setRoles(roles);
+            return new ResponseEntity( new UserResponse(currentUserEntity.get()),HttpStatus.OK);
+        } else {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
     }
 
     //ok
@@ -105,4 +115,5 @@ public class MainController {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         return authorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
+
 }

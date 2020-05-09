@@ -3,6 +3,7 @@ package com.example.contact.entities.users;
 import com.example.contact.entities.role.Role;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.Set;
 
 @Entity
@@ -23,7 +24,9 @@ public class UserEntity {
     private String name;
     @Column(name = "phone")
     private String phone;
+
     @Column(name = "email")
+    @Email
     private String email;
 
     @ManyToMany(fetch=FetchType.EAGER)

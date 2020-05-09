@@ -51,6 +51,11 @@ public class MyUserDetailsService implements UserDetailsService, UserService {
     }
 
     @Override
+    public List<String> findAllUsername() {
+        return userRepository.findAllUsername();
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         UserEntity userEntity = findByUsername(s);
         if(userEntity == null){

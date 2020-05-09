@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,5 +20,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("select u.name, u.phone, u.email from UserEntity u")
     Page<Object[]> findAllUser(Pageable pageable);
 
-
+    @Query("select u.username from UserEntity u")
+    List<String> findAllUsername();
 }

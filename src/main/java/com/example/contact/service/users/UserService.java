@@ -6,6 +6,7 @@ import com.example.contact.entities.users.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -21,4 +22,6 @@ public interface UserService {
     void remove(UserEntity studentEntity);
 
     Page<Object[]> findByName(String name, Pageable pageable);
+
+    List<String> findAllUsername();
 }
