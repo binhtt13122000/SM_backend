@@ -1,11 +1,12 @@
 package com.example.contact.entities.users;
 
+import com.example.contact.entities.role.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.example.contact.util.Constant;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 public class UserDetail implements UserDetails {
     private UserEntity userEntity;
@@ -16,8 +17,12 @@ public class UserDetail implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        final String role = "ROLE_" + userEntity.getRole();
-        return Collections.singleton(new SimpleGrantedAuthority(role));
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        Set<Role> roles = userEntity.getRoles();
+        for (Role role : roles) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+        return grantedAuthorities;
     }
 
     @Override

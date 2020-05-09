@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtUtil {
-    static final long EXPIRATION_TIME = 60000;//86_400_000; // 1 day
+    static final long EXPIRATION_TIME = 86_400_000; // 1 day
     static final String SECRET_KEY = "Binhtt";
 
     public String extractUsername(String token){

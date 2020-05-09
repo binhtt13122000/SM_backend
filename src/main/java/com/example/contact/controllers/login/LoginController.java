@@ -21,7 +21,7 @@ import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
-public class UserController {
+public class LoginController {
 
     @Autowired
     private JwtUtil jwtUtil;

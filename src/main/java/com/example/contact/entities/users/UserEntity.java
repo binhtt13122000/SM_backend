@@ -1,30 +1,46 @@
 package com.example.contact.entities.users;
 
+import com.example.contact.entities.role.Role;
+
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "Users_List")
+@Table(name = "[user]")
 public class UserEntity {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name = "id", nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
     @Column(name = "username", nullable = false, unique = true)
     private String username;
-    @Column(name = "password", nullable = false)
+    @Column(name = "[password]", nullable = false)
     private String password;
-    @Column(name = "name")
+    @Column(name = "[name]", nullable = false)
     private String name;
-    @Column(name = "role")
-    private String role;
+    @Column(name = "phone")
+    private String phone;
+    @Column(name = "email")
+    private String email;
+
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "[user_id]"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
     public UserEntity() {
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -52,11 +68,27 @@ public class UserEntity {
         this.name = name;
     }
 
-    public String getRole() {
-        return role;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }
