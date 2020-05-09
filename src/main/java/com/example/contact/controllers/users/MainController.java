@@ -3,6 +3,7 @@ package com.example.contact.controllers.users;
 import com.example.contact.entities.role.Role;
 import com.example.contact.entities.users.UserEntity;
 import com.example.contact.entities.users.UserResponse;
+import com.example.contact.repository.role.RoleRepository;
 import com.example.contact.service.users.MyUserDetailsService;
 import com.example.contact.validation.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,8 @@ import java.util.*;
 public class MainController {
     @Autowired
     private MyUserDetailsService userService;
-
+    @Autowired
+    private RoleRepository roleRepository;
     //ok
     @GetMapping("/users")
     @RolesAllowed("ROLE_ADMIN")
@@ -91,8 +93,9 @@ public class MainController {
         Optional<UserEntity> currentUserEntity = userService.findById(id);
         if(currentUserEntity.isPresent()){
             Set<Role> roles = currentUserEntity.get().getRoles();
-            roles.add(new Role((long) 1));
+            roles.add(roleRepository.getOne((long) 1));
             currentUserEntity.get().setRoles(roles);
+            userService.save(currentUserEntity.get());
             return new ResponseEntity( new UserResponse(currentUserEntity.get()),HttpStatus.OK);
         } else {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
